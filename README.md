@@ -1,8 +1,4 @@
-<p align="center">
-  <a href="https://fingerprintjs.com">
-    <img  src="https://fingerprintjs.com/img/logo-raster.png" alt="FPJS logo">
-  </a>
-</p>
+
 <p align="center">
   <a href="https://travis-ci.org/Valve/fingerprintjs2">
     <img src="https://img.shields.io/travis/Valve/fingerprintjs2.svg?style=flat-square" alt="build status">
@@ -20,7 +16,7 @@
 </p>
 <p align="center">
   <h3>
-  ⚡<a href="https://fingerprintjs.com/pro.html">FPJS PRO - free trial</a>⚡
+  <a href="https://fingerprintjs.com/demo">Try Fingerprint.js PRO Demo - 99.5% identification accuracy</a>
   </h3>
 </p>
 
@@ -116,7 +112,7 @@ To use Flash font enumeration, make sure you have swfobject available. If you do
 
 Arrays of extra components to include.
 
-```
+```js
 var options = {
     extraComponents : [
         {key: 'customKey', getData: function (done, options) {
@@ -149,7 +145,7 @@ Fingerprint2.get({
 
 An object of with components keys to exclude. Empty object to include everything. By default most of the components are included (please see the source code for details).
 
-```
+```js
 var options = {
     excludes: {userAgent: true, language: true}
 }
@@ -194,7 +190,7 @@ Fingerprint2.getV18(options, function (result, components) {
 
 `Fingerprint2.get` is now a static function. It replaces `new Fingerprint2().get`. It will not hash the result by default anymore.
 
-```
+```js
 var options = {}
 Fingerprint2.get(options, function (components) {
   // components is array of {key: 'foo', value: 'component value'}
@@ -211,7 +207,7 @@ Fingerprint2.getPromise(options).then(function (components) {
 
 Fingerprint2 ships with the murmur hash function that you may use to create a hash fingerprint:
 
-```
+```js
 Fingerprint2.get(options, function (components) {
     var values = components.map(function (component) { return component.value })
     var murmur = Fingerprint2.x64hash128(values.join(''), 31)
@@ -224,7 +220,7 @@ Fingerprint2.get(options, function (components) {
 Before exclusion was done by putting an individual excludes like `excludeTouchSupport: true` in the options.
 
 To exclude a component now, put its key inside the excludes object in options
-```
+```js
 var options = {excludes: {touchSupport: true}}
 ```
 
@@ -233,7 +229,7 @@ var options = {excludes: {touchSupport: true}}
 `options.customEntropyFunction` and `customKey` have been replaced with a extension friendly, stable alternative. The new contract allows for async sources as well. See below for component definition. `options.extraComponents` should contain an array with custom components.
 
 
-```
+```js
 var options = {
     extraComponents : [
         {key: 'customKey', getData: function (done, options) {
@@ -257,7 +253,7 @@ Fingerprint2.x64hash128 static function is now exposed
 
 ### Error constants are exposed and configurable
 
-```
+```js
 Fingerprint2.NOT_AVAILABLE = 'not available'
 Fingerprint2.ERROR = 'error'
 Fingerprint2.EXCLUDED = 'excluded'
@@ -272,7 +268,7 @@ audioTimeout is an option, default 1000ms
 ### Component
 
 A components is an object with at least key and getData keys, example:
-```
+```js
 {key: 'userAgent', getData: UserAgent, pauseBefore: false}
 ```
 getData value is the components function.
@@ -284,7 +280,7 @@ It must call done exactly once with a value that can be cast to a String.
 It must wrap all unreachable code (setTimeout, requestAnimationFrame, etc) in its own try catch,
 it should use catch as an opportunity to give a unique value to `done`
 
-```
+```js
 function (done, options) {
   done(navigator.userAgent)
 }
@@ -294,9 +290,19 @@ function (done, options) {
 
 Unit tests are in `specs/specs.js`
 
-`npm test` to launch the tests, it requires phanomjs install
+To run tests in various browser configurations:
 
-To run the tests in the browser, launch `spec_runner.html`
+`yarn test:chrome` to launch the tests in Google Chrome (headless mode), it requires a Google Chrome.
+`yarn test:chrome:incognito` to launch the tests in Google Chrome (headed, incognito mode), it requires a Google Chrome.
+`yarn test:firefox` to launch the tests in FireFox (headless mode), it requires a Firefox.
+`yarn test:firefox:incognito`
+`yarn test:safari`
+
+To run all configurations (requires Chrome, Firefox and Safari installed), run:
+
+`yarn test:all`
+
+To run the tests in the browser manually, open the `spec_runner.html` page in your browser.
 
 
 ## Other
@@ -337,3 +343,9 @@ https://player.vimeo.com/video/151208427
 [<img alt="Valve" src="https://avatars1.githubusercontent.com/u/27387?v=4&s=117" width="117">](https://github.com/Valve)[<img alt="jonashaag" src="https://avatars1.githubusercontent.com/u/175722?v=4&s=117" width="117">](https://github.com/jonashaag)[<img alt="antoinevastel" src="https://avatars1.githubusercontent.com/u/5827148?v=4&s=117" width="117">](https://github.com/antoinevastel)[<img alt="S-anasol" src="https://avatars2.githubusercontent.com/u/1709666?v=4&s=117" width="117">](https://github.com/S-anasol)[<img alt="unDemian" src="https://avatars1.githubusercontent.com/u/2129455?v=4&s=117" width="117">](https://github.com/unDemian)
 
 [<img alt="nuschk" src="https://avatars1.githubusercontent.com/u/5167117?v=4&s=117" width="117">](https://github.com/nuschk)[<img alt="hiuny" src="https://avatars2.githubusercontent.com/u/2697067?v=4&s=117" width="117">](https://github.com/hiuny)[<img alt="wkdtjsgur100" src="https://avatars2.githubusercontent.com/u/17163958?v=4&s=117" width="117">](https://github.com/wkdtjsgur100)[<img alt="msp" src="https://avatars1.githubusercontent.com/u/15280?v=4&s=117" width="117">](https://github.com/msp)[<img alt="ProcrastinatorCp" src="https://avatars3.githubusercontent.com/u/29228904?v=4&s=117" width="117">](https://github.com/ProcrastinatorCp)
+
+## Open-Source
+
+This software contains code from open-source projects:
+
+* MurmurHash3 by Karan Lyons (https://github.com/karanlyons/murmurHash3.js)
