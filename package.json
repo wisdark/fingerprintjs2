@@ -1,63 +1,85 @@
 {
-  "name": "fingerprintjs2",
-  "version": "2.1.2",
-  "description": "Modern & flexible browser fingerprinting library",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/fingerprintjs/fingerprintjs2.git"
-  },
+  "name": "@fingerprintjs/fingerprintjs",
+  "description": "Browser fingerprinting library with the highest accuracy and stability",
+  "version": "3.0.3",
   "keywords": [
     "fraud",
-    "fraud-detection",
-    "fraud-prevention",
+    "fraud detection",
+    "fraud prevention",
     "browser",
     "identification",
     "fingerprint",
     "fingerprinting",
+    "browser fingerprint",
+    "device fingerprint",
     "privacy"
   ],
-  "author": "Valentin Vasilyev",
+  "author": "FingerprintJS, Inc (https://fingerprintjs.com)",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fingerprintjs/fingerprintjs.git"
+  },
   "bugs": {
-    "url": "https://github.com/fingerprintjs/fingerprintjs2/issues"
+    "url": "https://github.com/fingerprintjs/fingerprintjs/issues"
   },
-  "homepage": "https://github.com/fingerprintjs/fingerprintjs2",
-  "main": "fingerprint2.js",
+  "homepage": "https://github.com/fingerprintjs/fingerprintjs",
+  "main": "dist/fp.cjs.js",
+  "module": "dist/fp.esm.js",
+  "types": "dist/fp.d.ts",
+  "sideEffects": false,
   "files": [
-    "dist",
-    "flash"
+    "dist"
   ],
-  "devDependencies": {
-    "gulp": "^4.0.0",
-    "gulp-header-license": "^1.0.9",
-    "gulp-rename": "^1.4.0",
-    "gulp-uglify": "^3.0.1",
-    "gulp-util": "^3.0.8",
-    "jasmine-expect": "^4.0.1",
-    "karma": "^4.0.0",
-    "karma-chrome-launcher": "^2.2.0",
-    "karma-firefox-launcher": "^1.2.0",
-    "karma-jasmine": "^2.0.1",
-    "karma-jasmine-matchers": "^4.0.1",
-    "karma-safari-launcher": "^1.0.0",
-    "standard": "^10.0.3"
-  },
   "scripts": {
-    "test:chrome": "karma start --single-run --browsers ChromeHeadlessNoSandbox tests/karma.conf.js",
-    "test:chrome:incognito": "karma start --single-run --browsers ChromeIncognito tests/karma.conf.js",
-    "test:firefox": "karma start --single-run --browsers FirefoxHeadless tests/karma.conf.js",
-    "test:firefox:incognito": "karma start --single-run --browsers FirefoxIncognito tests/karma.conf.js",
-    "test:safari": "karma start --single-run --browsers Safari tests/karma.conf.js",
-    "test:chrome:debug": "karma start --single-run false --browsers=Chrome tests/karma.conf.js",
-    "test:firefox:debug": "karma start --single-run false --browsers Firefox tests/karma.conf.js",
-    "test:all": "yarn run test:chrome && yarn run test:chrome:incognito && yarn run test:firefox && yarn run test:firefox:incognito && yarn run test:safari",
-    "gulp": "gulp",
-    "lint": "standard --fix"
+    "build": "rimraf dist && rollup -c",
+    "build:watch": "yarn build --watch",
+    "playground:start": "cd playground && webpack-dev-server --mode development",
+    "playground:build": "cd playground && webpack --mode production",
+    "lint": "eslint --ext .js,.ts --ignore-path .gitignore --max-warnings 0 .",
+    "lint:fix": "yarn lint --fix",
+    "test:local": "karma start tests/karma.local.config.js --single-run",
+    "test:browserstack": "karma start tests/karma.browserstack.config.js --single-run",
+    "test:dts": "tsc --noEmit dist/fp.d.ts"
   },
-  "standard": {
-    "ignore": [
-      "specs/lib",
-      "specs/phantomjs-testrunner.js"
-    ]
+  "dependencies": {
+    "tslib": "^2.0.1"
+  },
+  "devDependencies": {
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^9.0.0",
+    "@rollup/plugin-typescript": "^6.0.0",
+    "@types/jasmine": "^3.5.14",
+    "@types/ua-parser-js": "^0.7.33",
+    "@typescript-eslint/eslint-plugin": "^4.4.1",
+    "@typescript-eslint/parser": "^4.4.1",
+    "clean-webpack-plugin": "^3.0.0",
+    "eslint": "^7.11.0",
+    "eslint-config-prettier": "^6.13.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^4.5.0",
+    "karma": "^5.2.3",
+    "karma-browserstack-launcher": "^1.6.0",
+    "karma-chrome-launcher": "^3.1.0",
+    "karma-firefox-launcher": "^1.3.0",
+    "karma-jasmine": "^4.0.1",
+    "karma-spec-reporter": "^0.0.32",
+    "karma-summary-reporter": "^1.9.0",
+    "karma-typescript": "^5.2.0",
+    "prettier": "^2.1.2",
+    "promise-polyfill": "^8.2.0",
+    "rimraf": "^3.0.2",
+    "rollup": "^2.28.2",
+    "rollup-plugin-dts": "^1.4.13",
+    "rollup-plugin-license": "^2.2.0",
+    "rollup-plugin-terser": "^7.0.2",
+    "terser-webpack-plugin": "^4.2.3",
+    "ts-loader": "^8.0.7",
+    "typescript": "^4.0.3",
+    "ua-parser-js": "^0.7.22",
+    "webpack": "^4.44.2",
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0"
   }
 }

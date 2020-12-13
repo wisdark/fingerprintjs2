@@ -1,18 +1,31 @@
 {
+  "root": true,
   "env": {
     "browser": true,
     "node": true,
-    "amd": true
+    "es6": true
   },
-  "globals": {
-    "swfobject": true,
-    "ActiveXObject": true
-  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:prettier/recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "overrides": [
+    {
+      "files": ["**/*.ts"],
+      "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:prettier/recommended"
+      ],
+      "plugins": [
+        "@typescript-eslint"
+      ]
+    }
+  ],
   "rules": {
-    "no-fallthrough": false,
-    "yoda": false,
-    "no-shadow": false,
-    "no-new": false,
-    "no-extend-native": false
+    "no-console": "warn",
+    "max-len": ["error", { "code": 120, "ignoreUrls": true }]
   }
 }
