@@ -1,7 +1,9 @@
 import { version } from '../package.json'
 import { requestIdleCallbackIfAvailable } from './utils/async'
 import { x64hash128 } from './utils/hashing'
+import { errorToObject } from './utils/misc'
 import getBuiltinComponents, { BuiltinComponents, UnknownComponents } from './sources'
+import { watchScreenFrame } from './sources/screen_frame'
 
 /**
  * Options for Fingerprint class loading
@@ -42,6 +44,12 @@ export interface GetResult {
    * `UnknownComponents` that is more generic but guarantees backward compatibility within a major version.
    */
   components: BuiltinComponents
+  /**
+   * The fingerprinting algorithm version
+   *
+   * @see https://github.com/fingerprintjs/fingerprintjs#version-policy For more details
+   */
+  version: string
 }
 
 /**
@@ -56,7 +64,7 @@ export interface Agent {
 
 function componentsToCanonicalString(components: UnknownComponents) {
   let result = ''
-  for (const componentKey of Object.keys(components)) {
+  for (const componentKey of Object.keys(components).sort()) {
     const component = components[componentKey]
     const value = component.error ? 'error' : JSON.stringify(component.value)
     result += `${result ? '|' : ''}${componentKey.replace(/([:|\\])/g, '\\$1')}:${value}`
@@ -69,11 +77,7 @@ export function componentsToDebugString(components: UnknownComponents): string {
     components,
     (_key, value) => {
       if (value instanceof Error) {
-        return {
-          ...value,
-          message: value.message,
-          stack: value.stack?.split('\n'),
-        }
+        return errorToObject(value)
       }
       return value
     },
@@ -104,6 +108,7 @@ function makeLazyGetResult<T extends UnknownComponents>(components: T) {
     set visitorId(visitorId: string) {
       visitorIdCache = visitorId
     },
+    version,
   }
 }
 
@@ -112,11 +117,15 @@ function makeLazyGetResult<T extends UnknownComponents>(components: T) {
  * The hiding gives more freedom for future non-breaking updates.
  */
 export class OpenAgent implements Agent {
+  constructor() {
+    watchScreenFrame()
+  }
+
   /**
    * @inheritDoc
    */
   public async get(options: Readonly<GetOptions> = {}): Promise<GetResult> {
-    const components = await getBuiltinComponents()
+    const components = await getBuiltinComponents(options)
     const result = makeLazyGetResult(components)
 
     if (options.debug) {
@@ -125,7 +134,7 @@ export class OpenAgent implements Agent {
       console.log(`Copy the text below to get the debug data:
 
 \`\`\`
-version: ${version}
+version: ${result.version}
 userAgent: ${navigator.userAgent}
 getOptions: ${JSON.stringify(options, undefined, 2)}
 visitorId: ${result.visitorId}
@@ -144,6 +153,8 @@ export async function load({ delayFallback = 50 }: Readonly<LoadOptions> = {}): 
   // A delay is required to ensure consistent entropy components.
   // See https://github.com/fingerprintjs/fingerprintjs/issues/254
   // and https://github.com/fingerprintjs/fingerprintjs/issues/307
-  await requestIdleCallbackIfAvailable(delayFallback)
+  // and https://github.com/fingerprintjs/fingerprintjs/commit/945633e7c5f67ae38eb0fea37349712f0e669b18
+  // A proper deadline is unknown. Let it be twice the fallback timeout so that both cases have the same average time.
+  await requestIdleCallbackIfAvailable(delayFallback, delayFallback * 2)
   return new OpenAgent()
 }

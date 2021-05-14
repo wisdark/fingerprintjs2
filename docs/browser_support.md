@@ -4,7 +4,7 @@ The library supports all popular browsers.
 We use the following terminal command to decide which browsers to support:
 
 ```bash
-npx browserslist "cover 95% in us, not IE < 10"
+npx browserslist "cover 96% in us, not IE < 10, not safari < 9"
 ```
 
 At the moment, the browsers are:
@@ -21,6 +21,8 @@ At the moment, the browsers are:
 Other browsers will probably also work, but we don't guarantee it.
 
 ## Old browsers requirements
+
+### Polyfills
 
 Very old browsers like Internet Explorer 11 and Android Browser 4.1
 require a [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) polyfill to work.
@@ -51,7 +53,7 @@ Examples for various installation methods:
         (FingerprintJS) => {
           // Start loading FingerprintJS here
         }
-      );
+      )
     ```
 - ECMAScript module
     ```bash
@@ -62,8 +64,8 @@ Examples for various installation methods:
     ```
 
     ```diff
-    + import 'promise-polyfill/src/polyfill';
-      import FingerprintJS from '@fingerprintjs/fingerprintjs';
+    + import 'promise-polyfill/src/polyfill'
+      import FingerprintJS from '@fingerprintjs/fingerprintjs'
 
       // Start loading FingerprintJS here
     ```
@@ -76,8 +78,24 @@ Examples for various installation methods:
     ```
 
     ```diff
-    + require('promise-polyfill/src/polyfill');
-      const FingerprintJS = require('@fingerprintjs/fingerprintjs');
+    + require('promise-polyfill/src/polyfill')
+      const FingerprintJS = require('@fingerprintjs/fingerprintjs')
 
       // Start loading FingerprintJS here
     ```
+
+### Code syntax
+
+Old browsers like IE11 don't support arrow functions (`=>`). Use the classic function syntax instead:
+
+```diff
+  const fpPromise = FingerprintJS.load()
+
+  fpPromise
+-   .then(fp => fp.get())
++   .then(function (fp) { return fp.get() })
+-   .then(result => {
++   .then(function (result) {
+      // Handle the result
+    })
+```

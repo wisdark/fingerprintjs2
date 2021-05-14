@@ -1,8 +1,5 @@
 import { isDesktopSafari, isWebKit, isWebKit606OrNewer } from '../utils/browser'
 
-const w = window
-const d = document
-
 const enum SpecialFingerprint {
   /** Making a fingerprint is skipped because the browser is known to always suspend audio context */
   KnownToSuspend = -1,
@@ -17,8 +14,12 @@ const enum InnerErrorName {
   Suspended = 'suspended',
 }
 
-// Inspired by and based on https://github.com/cozylife/audio-fingerprint
+/**
+ * A deep description: https://fingerprintjs.com/blog/audio-fingerprinting/
+ * Inspired by and based on https://github.com/cozylife/audio-fingerprint
+ */
 export default async function getAudioFingerprint(): Promise<number> {
+  const w = window
   const AudioContext = w.OfflineAudioContext || w.webkitOfflineAudioContext
   if (!AudioContext) {
     return SpecialFingerprint.NotSupported
@@ -32,19 +33,20 @@ export default async function getAudioFingerprint(): Promise<number> {
     return SpecialFingerprint.KnownToSuspend
   }
 
-  const context = new AudioContext(1, 44100, 44100)
+  const hashFromIndex = 4500
+  const hashToIndex = 5000
+  const context = new AudioContext(1, hashToIndex, 44100)
 
   const oscillator = context.createOscillator()
   oscillator.type = 'triangle'
-  setAudioParam(context, oscillator.frequency, 10000)
+  oscillator.frequency.value = 10000
 
   const compressor = context.createDynamicsCompressor()
-  setAudioParam(context, compressor.threshold, -50)
-  setAudioParam(context, compressor.knee, 40)
-  setAudioParam(context, compressor.ratio, 12)
-  setAudioParam(context, compressor.reduction, -20)
-  setAudioParam(context, compressor.attack, 0)
-  setAudioParam(context, compressor.release, 0.25)
+  compressor.threshold.value = -50
+  compressor.knee.value = 40
+  compressor.ratio.value = 12
+  compressor.attack.value = 0
+  compressor.release.value = 0.25
 
   oscillator.connect(compressor)
   compressor.connect(context.destination)
@@ -58,12 +60,9 @@ export default async function getAudioFingerprint(): Promise<number> {
       return SpecialFingerprint.Timeout
     }
     throw error
-  } finally {
-    oscillator.disconnect()
-    compressor.disconnect()
   }
 
-  return getHash(buffer.getChannelData(0))
+  return getHash(buffer.getChannelData(0).subarray(hashFromIndex))
 }
 
 /**
@@ -71,15 +70,6 @@ export default async function getAudioFingerprint(): Promise<number> {
  */
 function doesCurrentBrowserSuspendAudioContext() {
   return isWebKit() && !isDesktopSafari() && !isWebKit606OrNewer()
-}
-
-function setAudioParam(context: BaseAudioContext, param: unknown, value: number) {
-  const isAudioParam = (value: unknown): value is AudioParam =>
-    value && typeof (value as AudioParam).setValueAtTime === 'function'
-
-  if (isAudioParam(param)) {
-    param.setValueAtTime(value, context.currentTime)
-  }
 }
 
 function renderAudio(context: OfflineAudioContext) {
@@ -108,7 +98,7 @@ function renderAudio(context: OfflineAudioContext) {
           // in background isn't a problem, therefore the retry attempts don't count in background. It can lead to
           // a situation when a fingerprint takes very long time and finishes successfully. FYI, the audio context
           // can be suspended when `document.hidden === false` and start running after a retry.
-          if (!d.hidden) {
+          if (!document.hidden) {
             resumeTriesLeft--
           }
           if (resumeTriesLeft > 0) {
@@ -126,7 +116,7 @@ function renderAudio(context: OfflineAudioContext) {
 
 function getHash(signal: ArrayLike<number>): number {
   let hash = 0
-  for (let i = 4500; i < 5000; ++i) {
+  for (let i = 0; i < signal.length; ++i) {
     hash += Math.abs(signal[i])
   }
   return hash

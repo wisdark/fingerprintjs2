@@ -18,7 +18,13 @@ jobs:
     steps:
       # TypeScript types are checked during building and testing so there is no need for a separate step for the check
       - name: Checkout
-        uses: actions/checkout@master
+        uses: actions/checkout@v2
+      - name: Cache
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: nodemodules-${{ hashFiles('yarn.lock') }}
+          restore-keys: nodemodules-
       - name: Install Node packages
         run: yarn install
       - name: Lint
@@ -27,6 +33,9 @@ jobs:
         run: yarn build
       - name: Check the distributive TypeScript declarations
         run: yarn test:dts
+        # Helps to prevent https://github.com/fingerprintjs/fingerprintjs/issues/602
+      - name: Check the ability to work with server side rendering
+        run: yarn test:ssr
       - name: Test on BrowserStack
         env:
           BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}

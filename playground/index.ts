@@ -1,5 +1,6 @@
 import 'promise-polyfill/src/polyfill'
 import * as FingerprintJS from '../src'
+import { errorToObject } from '../src/utils/misc'
 
 async function getVisitorData() {
   const fp = await FingerprintJS.load()
@@ -24,6 +25,7 @@ async function startPlayground() {
     addOutputSection(output, 'Entropy components:', FingerprintJS.componentsToDebugString(components))
 
     initializeDebugButtons(`Visitor identifier: \`${visitorId}\`
+Time took to get the identifier: ${totalTime}ms
 User agent: \`${navigator.userAgent}\`
 Entropy components:
 \`\`\`
@@ -31,11 +33,7 @@ ${FingerprintJS.componentsToDebugString(components)}
 \`\`\``)
   } catch (error) {
     const totalTime = Date.now() - startTime
-    const errorData = {
-      message: error.message,
-      stack: error.stack.split('\n'),
-      ...error,
-    }
+    const errorData = errorToObject(error)
     output.innerHTML = ''
     addOutputSection(output, 'Unexpected error:', JSON.stringify(errorData, null, 2))
     addOutputSection(output, 'Time passed before the error:', `${totalTime}ms`, 'big')

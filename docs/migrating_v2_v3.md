@@ -48,12 +48,14 @@ The agent has a `get` method that you will use instead of calling `Fingerprint2.
 
 ```diff
 - requestIdleCallback(() => {
-+ FingerprintJS.load().then(fp => {
--   Fingerprint2.get().then(result => {
-+   fp.get().then(result => {
+-   Fingerprint2.get(result => {
++ const fpPromise = FingerprintJS.load()
++ fpPromise
++   .then(fp => fp.get()){
++   .then(result => {
       // Handle the result
     })
-  })
+- })
 ```
 
 ## Handling the result
@@ -94,22 +96,5 @@ console.log(result)
 ## Customization
 
 Version 3 has no options for customization, it provides a good built-in setup.
-Nevertheless, you can exclude components and add custom components manually.
-Use the provided hash function to achieve this:
-
-```js
-const result = await fp.get()
-
-// Exclude a couple components
-const { languages, audio, ...components } = result
-
-// Add a few custom components
-const extendedComponents = {
-  ...components,
-  foo: { value: await getFooComponent() },
-  bar: { value: await getBarComponent() },
-}
-
-// Make a visitor identifier from your custom list of components
-const visitorId = FingerprintJS.hashComponents(extendedComponents)
-```
+Nevertheless, you can exclude built-in entropy components and add custom entropy components manually.
+See the [extending guide](extending.md) to learn more.
