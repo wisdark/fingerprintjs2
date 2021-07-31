@@ -46,6 +46,14 @@ export function isAndroid(): boolean {
   return new UAParser().getOS().name === 'Android'
 }
 
+export function isWindows(): boolean {
+  return new UAParser().getOS().name === 'Windows'
+}
+
+export function isMacOS(): boolean {
+  return new UAParser().getOS().name === 'Mac OS'
+}
+
 /**
  * Probably you should use `isWebKit` instead
  */
@@ -83,5 +91,12 @@ export async function withCSS<T>(css: string, action: () => Promise<T> | T): Pro
     return await action()
   } finally {
     styleElement.parentNode?.removeChild(styleElement)
+  }
+}
+
+export function holdLoop(timeMs: number): void {
+  const startTime = Date.now()
+  while (Date.now() < startTime + timeMs) {
+    // Do nothing
   }
 }

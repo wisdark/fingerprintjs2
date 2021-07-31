@@ -1,7 +1,7 @@
 {
   "name": "@fingerprintjs/fingerprintjs",
   "description": "Browser fingerprinting library with the highest accuracy and stability",
-  "version": "3.1.2",
+  "version": "3.3.0",
   "keywords": [
     "fraud",
     "fraud detection",
@@ -59,6 +59,7 @@
     "eslint-config-prettier": "^6.13.0",
     "eslint-plugin-prettier": "^3.1.4",
     "file-loader": "^6.2.0",
+    "got": "^11.8.2",
     "html-webpack-plugin": "^4.5.0",
     "karma": "^6.3.2",
     "karma-browserstack-launcher": "^1.6.0",

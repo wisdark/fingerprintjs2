@@ -17,6 +17,11 @@
     <img src="https://img.shields.io/jsdelivr/npm/hm/@fingerprintjs/fingerprintjs.svg" alt="Monthly downloads from jsDelivr">
   </a>
 </p>
+<p align="center">
+  <a href="https://discord.gg/39EpE2neBg">
+    <img src="https://img.shields.io/discord/852099967190433792?style=for-the-badge&label=Discord&logo=Discord&logoColor=white" alt="Discord server">
+  </a>
+</p>
 
 FingerprintJS is a browser fingerprinting library that queries browser attributes and computes a hashed visitor identifier from them. Unlike cookies and local storage, a fingerprint stays the same in incognito/private mode and even when browser data is purged.
 
@@ -80,12 +85,12 @@ const fpPromise = FingerprintJS.load()
 
 📕 [Full documentation](docs/api.md)
 
-## Switch to [Pro version](https://fingerprintjs.com/github/) for free to get 99.5% identification accuracy
+## Upgrade to [Pro version](https://fingerprintjs.com/github/) to get 99.5% identification accuracy
 
 FingerprintJS Pro is a professional visitor identification service that processes all information server-side and transmits it securely to your servers using server-to-server APIs.
 Pro combines browser fingerprinting with vast amounts of auxiliary data (IP addresses, time of visit patterns, URL changes and more) to be able to reliably deduplicate different users that have identical devices, resulting in 99.5% identification accuracy.
 
-**You can use Pro FREE for up to 1,000 unique monthly visitors - no credit card required.**
+**You can try Pro without usage limits for 30 days - no credit card required.**
 
 <p align="center">
   <a href="https://fingerprintjs.com/github/">
@@ -173,7 +178,7 @@ Pro result example:
 
 ## Version policy
 
-See the visitor identifier compatibility policy in the [version policy guide](docs/browser_support.md).
+See the compatibility policy for the API and visitor identifiers in the [version policy guide](docs/version_policy.md).
 
 ## Browser support
 
@@ -183,3 +188,7 @@ See more details and learn how to run the library in old browsers in the [browse
 ## Contributing
 
 See the [contributing guidelines](contributing.md) to learn how to start a playground, test and build.
+
+## Useful links
+
+* [Easy to use bot detection in JS, new FingerprintJS project](https://github.com/fingerprintjs/botd)
