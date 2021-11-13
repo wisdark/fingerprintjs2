@@ -29,21 +29,11 @@ FingerprintJS is a browser fingerprinting library that queries browser attribute
 
 ## Quick start
 
-### Install from CDN
-
 ```html
 <script>
   // Initialize the agent at application startup.
-  const fpPromise = new Promise((resolve, reject) => {
-    const script = document.createElement('script')
-    script.onload = resolve
-    script.onerror = reject
-    script.async = true
-    script.src = 'https://cdn.jsdelivr.net/npm/'
-      + '@fingerprintjs/fingerprintjs@3/dist/fp.min.js'
-    document.head.appendChild(script)
-  })
-    .then(() => FingerprintJS.load())
+  const fpPromise = import('https://openfpcdn.io/fingerprintjs/v3')
+    .then(FingerprintJS => FingerprintJS.load())
 
   // Get the visitor identifier when you need it.
   fpPromise
@@ -58,39 +48,12 @@ FingerprintJS is a browser fingerprinting library that queries browser attribute
 
 [Run this code](https://stackblitz.com/edit/fpjs-3-cdn?file=index.html&devtoolsheight=100)
 
-### Alternatively you can install from NPM to use with Webpack/Rollup/Browserify
-
-```bash
-npm i @fingerprintjs/fingerprintjs
-# or
-yarn add @fingerprintjs/fingerprintjs
-```
-
-```js
-import FingerprintJS from '@fingerprintjs/fingerprintjs'
-
-// Initialize an agent at application startup.
-const fpPromise = FingerprintJS.load()
-
-;(async () => {
-  // Get the visitor identifier when you need it.
-  const fp = await fpPromise
-  const result = await fp.get()
-
-  // This is the visitor identifier:
-  const visitorId = result.visitorId
-  console.log(visitorId)
-})()
-```
-
-[Run this code](https://stackblitz.com/edit/fpjs-3-npm?file=index.js&devtoolsheight=100)
-
 📕 [Full documentation](docs/api.md)
 
 ## Upgrade to [Pro version](https://fingerprintjs.com/github/) to get 99.5% identification accuracy
 
 FingerprintJS Pro is a professional visitor identification service that processes all information server-side and transmits it securely to your servers using server-to-server APIs.
-Pro combines browser fingerprinting with vast amounts of auxiliary data (IP addresses, time of visit patterns, URL changes and more) to be able to reliably deduplicate different users that have identical devices, resulting in 99.5% identification accuracy.
+Pro combines browser fingerprinting with vast amounts of auxiliary data (IP addresses, time of visit patterns, URL changes and more) to be able to reliably deduplicate different users that have identical devices, resulting in the 99.5% identification accuracy.
 
 **You can try Pro without usage limits for 10 days - no credit card required.**
 
@@ -192,6 +155,7 @@ See more details and learn how to run the library in old browsers in the [browse
 
 See the [contributing guidelines](contributing.md) to learn how to start a playground, test and build.
 
-## Useful links
+## Other projects by FingerprintJS
 
-* [Easy to use bot detection in JS, new FingerprintJS project](https://github.com/fingerprintjs/botd)
+* [BotD -- Easy to use JavaScript bot detection](https://github.com/fingerprintjs/botd)
+* [AEV -- Android App Environment Verification API](https://github.com/fingerprintjs/aev)
