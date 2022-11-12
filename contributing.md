@@ -27,6 +27,12 @@ yarn playground:build
 
 The result will appear at `playground/dist`.
 
+If the commands fail with `Error: error:0308010C:digital envelope routines::unsupported`, use a workaround:
+```bash
+# For Linux, macOS and WSL (Linux on Windows)
+NODE_OPTIONS=--openssl-legacy-provider yarn ...put the command name here...
+```
+
 ### Code style
 
 The code style is controlled by [ESLint](https://eslint.org) and [Prettier](https://prettier.io).
@@ -77,6 +83,11 @@ const var3 = var1.prop
 const var4 = { [Enum.Member]: 'foo' }
 ```
 
+The `include` parameter of `tsconfig.json` files may contain only the entry files and the `.d.ts` files.
+
+Some `interface`s are replaced with `type`s in the entropy sources to help to avoid
+["cannot be named" errors](https://github.com/microsoft/TypeScript/issues/5711) in projects using FingerprintJS.
+
 ### How to test
 
 There are automatic tests.
@@ -98,6 +109,11 @@ To run the tests in browsers on [BrowserStack](https://www.browserstack.com), ge
 # For Linux, macOS and WSL (Linux on Windows)
 BROWSERSTACK_USERNAME=your-username BROWSERSTACK_ACCESS_KEY=your-key yarn test:browserstack
 ```
+If you face `Error: spawn Unknown system error -86` on macOS, try installing Rosetta:
+```bash
+softwareupdate --install-rosetta
+```
+
 Alternatively, make a PR to this repository, the test will run on BrowserStack automatically.
 But the test won't run when the PR is made from a fork repository, in this case a member will run the tests manually.
 
@@ -109,13 +125,13 @@ If you run the test command multiple times in parallel, BrowserStack will lose a
 To check the distributive TypeScript declarations, build the project and run:
 
 ```bash
-yarn test:dts
+yarn check:dts
 ```
 
 To check that the package is compatible with server side rendering, build the project and run:
 
 ```bash
-yarn test:ssr
+yarn check:ssr
 ```
 
 ### How to make an entropy source
