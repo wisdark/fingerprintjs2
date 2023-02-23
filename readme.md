@@ -29,7 +29,30 @@
 
 FingerprintJS is a browser fingerprinting library that queries browser attributes and computes a hashed visitor identifier from them. Unlike cookies and local storage, a fingerprint stays the same in incognito/private mode and even when browser data is purged.
 
-[View Our Demo](https://fingerprintjs.github.io/fingerprintjs/).
+FingerprintJS is 100% open-source, but its accuracy is limited because it's only a client-side library without a backend.
+
+<table>
+  <thead>
+    <tr>
+      <th align="center">Open Source library accuracy</th>
+      <th align="center">Fingerprint Pro accuracy</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>FingerprintJS has limited accuracy (40% - 60%) and functionality, because it's not possible to do many things without a backend.</td>
+      <td>
+        <a href="https://fingerprint.com/github">Fingerprint Pro</a> is a high-scale device identity platform that has both client-side and server-side components and identifies browsers and mobile devices with a 99.5% accuracy. 
+        Fingerprint Pro is free for developers, production plans start at $200/mo.
+      </td>
+    </tr>
+     <tr>
+      <td>FingerprintJS library demo: https://fingerprintjs.github.io/fingerprintjs</td>
+      <td>Fingerprint Pro demo: https://fingerprint.com/demo</td>
+    </tr>
+  </tbody>
+</table>
+
 
 ## Quick start
 
@@ -54,6 +77,8 @@ FingerprintJS is a browser fingerprinting library that queries browser attribute
 
 📕 [Full documentation](docs/api.md)
 
+⚛️ [Sample usage with React on the StackBlitz platform](https://stackblitz.com/edit/fingerprintjs-react-demo)
+
 ## Use the free Pro version to get 99.5% identification accuracy
 
 [Fingerprint Pro](https://fingerprint.com/github/) is a professional visitor identification service that processes all information server-side and transmits it securely to your servers using server-to-server APIs.
@@ -63,7 +88,7 @@ Pro combines browser fingerprinting with vast amounts of auxiliary data (IP addr
 
 <p align="center">
   <a href="https://fingerprint.com/github/">
-    <img src="resources/pro_screenshot.png" alt="Pro screenshot" width="697px" />
+    <img src="resources/github_landing.png" alt="Pro screenshot" />
   </a>
 </p>
 
@@ -81,13 +106,18 @@ Full product comparison:
     <tr><td colspan="3"><h4>Core Features</h4></td></tr>
     <tr><td>100% open source</td><td align="center">yes</td><td align="center">no<sup>1</sup></td></tr>
     <tr><td>Accuracy</td><td align="center">up to 60%</td><td align="center"><b>99.5%</b></td></tr>
-    <tr><td><b>Mobile Native SDKs</b><br/><i>Android, iOS, Flutter, React Native and more</i></td><td align="center">-</td><td align="center"><b>✓</b></td></tr>
     <tr><td><b>Standard fingerprint signals</b><br/><i>screen, os, device name</i></td><td align="center">✓</td><td align="center">✓</td></tr>
     <tr><td><b>Advanced fingerprint signals</b><br/><i>canvas, audio, fonts</i></td><td align="center">✓</td><td align="center">✓</td></tr>
     <tr><td><b>ID type</b></td><td align="center">fingerprint</td><td align="center">visitorID<sup>2</sup></td></tr>
     <tr><td><b>ID lifetime</b></td><td align="center">several weeks</td><td align="center">months/years</td></tr>
     <tr><td><b>ID origin</b></td><td align="center">client</td><td align="center">server</td></tr>
     <tr><td><b>ID collisions</b></td><td align="center">common</td><td align="center">rare</td></tr>
+    <!-- -->
+    <tr><td colspan="3"><h4>Mobile Native SDKs</h4></td></tr>
+    <tr><td>Android</td><td align="center">✓</td><td align="center"><b>✓</b></td></tr>
+    <tr><td>iOS</td><td align="center">✓</td><td align="center"><b>✓</b></td></tr>
+    <tr><td>Flutter</td><td align="center">-</td><td align="center"><b>✓</b></td></tr>
+    <tr><td>React Native</td><td align="center">-</td><td align="center"><b>✓</b></td></tr>
     <!-- -->
     <tr><td colspan="3"><h4>Additional Features</h4></td></tr>
     <tr><td><b>Incognito mode detection</b><br/><i>works in all modern browsers - see our full list of <a href="https://dev.fingerprint.com/docs/browser-support/" target="_blank">browsers supported</a></i></td><td align="center">–</td><td align="center">✓</td></tr>
@@ -112,7 +142,8 @@ Full product comparison:
 
 <sub>3. Fingerprint Pro is GDPR and CCPA compliant as the data processor. You still need to be compliant as the data controller and use the identification for fraud prevention under legitimate interest or ask for user consent.</sub>
 
-Pro result example:
+<details>
+<summary>Pro result example</summary>
 
 ```js
 {
@@ -132,9 +163,19 @@ Pro result example:
     "latitude": 37.409657,
     "longitude": -121.965467
     // ...
+  },
+  "firstSeenAt": {
+    "global": "2022-03-16T11:26:45.362Z",
+    "subscription": "2022-03-16T11:31:01.101Z"
+  },
+  "lastSeenAt": {
+    "global": "2022-05-21T18:05:43.023Z",
+    "subscription": "2022-05-20T05:41:29.926Z"
   }
 }
 ```
+
+</details>
 
 🍿 [Live demo](https://fingerprint.com/demo)
 
@@ -143,8 +184,6 @@ Pro result example:
 📕 [Fingerprint Pro documentation](https://dev.fingerprint.com)
 
 ▶️ [Video: use Fingerprint Pro to prevent multiple signups](https://www.youtube.com/watch?v=jWX9P5_jZn8)
-
-🤖 [Sample usage with React on the StackBlitz platform](https://stackblitz.com/edit/fingerprintjs-react-demo)
 
 ## Migrating from v2
 

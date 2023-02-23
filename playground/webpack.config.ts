@@ -1,10 +1,10 @@
-import type { ConfigurationFactory } from 'webpack'
+import { ConfigOptions } from 'webpack-cli'
+import { Configuration as DevServer } from 'webpack-dev-server'
 import * as HtmlWebpackPlugin from 'html-webpack-plugin'
-import { CleanWebpackPlugin } from 'clean-webpack-plugin'
 import * as TerserPlugin from 'terser-webpack-plugin'
 import terserConfig from '../terser.config'
 
-const configurationFactory: ConfigurationFactory = (_env, { mode = 'development' }) => ({
+const configurationFactory: ConfigOptions = (_env, { mode = 'development' }) => ({
   entry: './index.ts',
   mode,
   resolve: {
@@ -17,7 +17,6 @@ const configurationFactory: ConfigurationFactory = (_env, { mode = 'development'
         loader: 'ts-loader',
         exclude: /node_modules/,
         options: {
-          configFile: '../tsconfig.json', // The `./tsconfig.json` file is made for the webpack.config.ts file itself
           compilerOptions: {
             sourceMap: true,
           },
@@ -42,19 +41,22 @@ const configurationFactory: ConfigurationFactory = (_env, { mode = 'development'
   },
   devtool: mode === 'development' ? 'inline-source-map' : 'source-map',
   output: {
+    clean: true,
     filename: '[name].js?[contenthash]',
   },
   devServer: {
     host: '0.0.0.0',
-    disableHostCheck: true,
-  },
+    allowedHosts: 'all',
+  } satisfies DevServer,
   plugins: [
-    new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       template: './index.html',
       title: `FingerprintJS Open Source ${mode === 'development' ? 'Playground' : 'Demo'}`,
     }),
   ],
+  // https://stackoverflow.com/a/71739898/1118709
+  // Correct (but not worth effort) solutions: build-time macros, custom JSON loader, Rollup instead of Webpack, riot
+  ignoreWarnings: [/Should not import the named export 'version' .* from default-exporting module/],
 })
 
 export default configurationFactory
