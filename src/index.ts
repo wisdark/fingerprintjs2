@@ -27,7 +27,11 @@ export default { load, hashComponents, componentsToDebugString }
 export const murmurX64Hash128 = x64hash128
 export { prepareForSources } from './agent'
 export { sources } from './sources'
-export { getScreenFrame } from './sources/screen_frame'
+export { getUnstableAudioFingerprint } from './sources/audio'
+export { getUnstableCanvasFingerprint } from './sources/canvas'
+export { getUnstableScreenFrame } from './sources/screen_frame'
+export { getUnstableScreenResolution } from './sources/screen_resolution'
+export { getWebGLContext } from './sources/webgl'
 export {
   getFullscreenElement,
   isAndroid,
@@ -36,7 +40,7 @@ export {
   isChromium,
   isWebKit,
   isGecko,
-  isDesktopSafari,
+  isDesktopWebKit,
 } from './utils/browser'
 export {
   loadSources,
@@ -45,3 +49,4 @@ export {
   transformSource, // Not used here but adds only 222 uncompressed (60 compressed) bytes of code
   UnknownSources,
 } from './utils/entropy_source'
+export { withIframe } from './utils/dom'

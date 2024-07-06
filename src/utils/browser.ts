@@ -1,4 +1,5 @@
 import { countTruthy } from './data'
+import { isFunctionNative } from './misc'
 
 /*
  * Functions to help with features that vary through browsers
@@ -92,21 +93,55 @@ export function isWebKit(): boolean {
 }
 
 /**
- * Checks whether the WebKit browser is a desktop Safari.
+ * Checks whether this WebKit browser is a desktop browser.
+ * It doesn't check that the browser is based on WebKit, there is a separate function for this.
  *
  * Warning for package users:
  * This function is out of Semantic Versioning, i.e. can change unexpectedly. Usage is at your own risk.
  */
-export function isDesktopSafari(): boolean {
+export function isDesktopWebKit(): boolean {
+  // Checked in Safari and DuckDuckGo
+
   const w = window
+  const { HTMLElement, Document } = w
 
   return (
     countTruthy([
       'safari' in w, // Always false in Karma and BrowserStack Automate
-      !('DeviceMotionEvent' in w),
       !('ongestureend' in w),
-      !('standalone' in navigator),
-    ]) >= 3
+      !('TouchEvent' in w),
+      !('orientation' in w),
+      HTMLElement && !('autocapitalize' in HTMLElement.prototype),
+      Document && 'pointerLockElement' in Document.prototype,
+    ]) >= 4
+  )
+}
+
+/**
+ * Checks whether this WebKit browser is Safari.
+ * It doesn't check that the browser is based on WebKit, there is a separate function for this.
+ *
+ * Warning! The function works properly only for Safari version 15 and newer.
+ */
+export function isSafariWebKit(): boolean {
+  // Checked in Safari, Chrome, Firefox, Yandex, UC Browser, Opera, Edge and DuckDuckGo.
+  // iOS Safari and Chrome were checked on iOS 11-17. DuckDuckGo was checked on iOS 17 and macOS 14.
+  // Desktop Safari versions 12-17 were checked.
+  // The other browsers were checked on iOS 17; there was no chance to check them on the other OS versions.
+
+  const w = window
+
+  if (!isFunctionNative(w.print)) {
+    return false // Chrome, Firefox, Yandex, DuckDuckGo macOS, Edge
+  }
+
+  return (
+    countTruthy([
+      // Incorrect in Safari <= 14 (iOS and macOS)
+      String((w as unknown as Record<string, unknown>).browser) === '[object WebPageNamespace]',
+      // Incorrect in desktop Safari and iOS Safari <= 15
+      'MicrodataExtractor' in w,
+    ]) >= 1
   )
 }
 
@@ -154,10 +189,10 @@ export function isChromium86OrNewer(): boolean {
  * Checks whether the browser is based on WebKit version ≥606 (Safari ≥12) without using user-agent.
  * It doesn't check that the browser is based on WebKit, there is a separate function for this.
  *
- * @link https://en.wikipedia.org/wiki/Safari_version_history#Release_history Safari-WebKit versions map
+ * @see https://en.wikipedia.org/wiki/Safari_version_history#Release_history Safari-WebKit versions map
  */
 export function isWebKit606OrNewer(): boolean {
-  // Checked in Safari 9–14
+  // Checked in Safari 9–17
   const w = window
 
   return (
@@ -171,15 +206,38 @@ export function isWebKit606OrNewer(): boolean {
 }
 
 /**
+ * Checks whether the browser is based on WebKit version ≥616 (Safari ≥17) without using user-agent.
+ * It doesn't check that the browser is based on WebKit, there is a separate function for this.
+ *
+ * @see https://developer.apple.com/documentation/safari-release-notes/safari-17-release-notes Safari 17 release notes
+ * @see https://tauri.app/v1/references/webview-versions/#webkit-versions-in-safari Safari-WebKit versions map
+ */
+export function isWebKit616OrNewer(): boolean {
+  const w = window
+  const n = navigator
+  const { CSS, HTMLButtonElement } = w
+
+  return (
+    countTruthy([
+      !('getStorageUpdates' in n),
+      HTMLButtonElement && 'popover' in HTMLButtonElement.prototype,
+      'CSSCounterStyleRule' in w,
+      CSS.supports('font-size-adjust: ex-height 0.5'),
+      CSS.supports('text-transform: full-width'),
+    ]) >= 4
+  )
+}
+
+/**
  * Checks whether the device is an iPad.
  * It doesn't check that the engine is WebKit and that the WebKit isn't desktop.
  */
 export function isIPad(): boolean {
   // Checked on:
-  // Safari on iPadOS (both mobile and desktop modes): 8, 11, 12, 13, 14
-  // Chrome on iPadOS (both mobile and desktop modes): 11, 12, 13, 14
-  // Safari on iOS (both mobile and desktop modes): 9, 10, 11, 12, 13, 14
-  // Chrome on iOS (both mobile and desktop modes): 9, 10, 11, 12, 13, 14
+  // Safari on iPadOS (both mobile and desktop modes): 8, 11-17
+  // Chrome on iPadOS (both mobile and desktop modes): 11-17
+  // Safari on iOS (both mobile and desktop modes): 9-17
+  // Chrome on iOS (both mobile and desktop modes): 9-17
 
   // Before iOS 13. Safari tampers the value in "request desktop site" mode since iOS 13.
   if (navigator.platform === 'iPad') {
@@ -193,7 +251,7 @@ export function isIPad(): boolean {
     countTruthy([
       'MediaSource' in window, // Since iOS 13
       !!Element.prototype.webkitRequestFullscreen, // Since iOS 12
-      // iPhone 4S that runs iOS 9 matches this. But it won't match the criteria above, so it won't be detected as iPad.
+      // iPhone 4S that runs iOS 9 matches this, but it is not supported
       screenRatio > 0.65 && screenRatio < 1.53,
     ]) >= 2
   )
@@ -223,23 +281,28 @@ export function exitFullscreen(): Promise<void> {
 export function isAndroid(): boolean {
   const isItChromium = isChromium()
   const isItGecko = isGecko()
-
-  // Only 2 browser engines are presented on Android.
-  // Actually, there is also Android 4.1 browser, but it's not worth detecting it at the moment.
-  if (!isItChromium && !isItGecko) {
-    return false
-  }
-
   const w = window
+  const n = navigator
+  const c = 'connection'
 
   // Chrome removes all words "Android" from `navigator` when desktop version is requested
   // Firefox keeps "Android" in `navigator.appVersion` when desktop version is requested
-  return (
-    countTruthy([
-      'onorientationchange' in w,
-      'orientation' in w,
-      isItChromium && !('SharedWorker' in w),
-      isItGecko && /android/i.test(navigator.appVersion),
-    ]) >= 2
-  )
+  if (isItChromium) {
+    return (
+      countTruthy([
+        !('SharedWorker' in w),
+        // `typechange` is deprecated, but it's still present on Android (tested on Chrome Mobile 117)
+        // Removal proposal https://bugs.chromium.org/p/chromium/issues/detail?id=699892
+        // Note: this expression returns true on ChromeOS, so additional detectors are required to avoid false-positives
+        n[c] && 'ontypechange' in n[c],
+        !('sinkId' in new window.Audio()),
+      ]) >= 2
+    )
+  } else if (isItGecko) {
+    return countTruthy(['onorientationchange' in w, 'orientation' in w, /android/i.test(navigator.appVersion)]) >= 2
+  } else {
+    // Only 2 browser engines are presented on Android.
+    // Actually, there is also Android 4.1 browser, but it's not worth detecting it at the moment.
+    return false
+  }
 }

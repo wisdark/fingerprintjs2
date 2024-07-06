@@ -21,11 +21,6 @@ export interface LoadOptions {
    * Required to ease investigations of problems.
    */
   debug?: boolean
-  /**
-   * Set `false` to disable the unpersonalized AJAX request that the agent sends to collect installation statistics.
-   * It's always disabled in the version published to the FingerprintJS CDN.
-   */
-  monitoring?: boolean
 }
 
 /**
@@ -82,7 +77,7 @@ function componentsToCanonicalString(components: UnknownComponents) {
   let result = ''
   for (const componentKey of Object.keys(components).sort()) {
     const component = components[componentKey]
-    const value = component.error ? 'error' : JSON.stringify(component.value)
+    const value = 'error' in component ? 'error' : JSON.stringify(component.value)
     result += `${result ? '|' : ''}${componentKey.replace(/([:|\\])/g, '\\$1')}:${value}`
   }
   return result
@@ -200,11 +195,12 @@ function monitor() {
 /**
  * Builds an instance of Agent and waits a delay required for a proper operation.
  */
-export async function load({ delayFallback, debug, monitoring = true }: Readonly<LoadOptions> = {}): Promise<Agent> {
-  if (monitoring) {
+export async function load(options: Readonly<LoadOptions> = {}): Promise<Agent> {
+  if ((options as { monitoring?: boolean }).monitoring ?? true) {
     monitor()
   }
+  const { delayFallback, debug } = options
   await prepareForSources(delayFallback)
-  const getComponents = loadBuiltinSources({ debug })
+  const getComponents = loadBuiltinSources({ cache: {}, debug })
   return makeAgent(getComponents, debug)
 }

@@ -72,12 +72,13 @@ export default function getFonts(): Promise<string[]> {
   // Running the script in an iframe makes it not affect the page look and not be affected by the page CSS. See:
   // https://github.com/fingerprintjs/fingerprintjs/issues/592
   // https://github.com/fingerprintjs/fingerprintjs/issues/628
-  return withIframe((_, { document }) => {
+  return withIframe(async (_, { document }) => {
     const holder = document.body
     holder.style.fontSize = textSize
 
     // div to load spans for the default fonts and the fonts to detect
     const spansContainer = document.createElement('div')
+    spansContainer.style.setProperty('visibility', 'hidden', 'important')
 
     const defaultWidth: Partial<Record<string, number>> = {}
     const defaultHeight: Partial<Record<string, number>> = {}

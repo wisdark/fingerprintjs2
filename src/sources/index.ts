@@ -9,7 +9,7 @@ import getLanguages from './languages'
 import getColorDepth from './color_depth'
 import getDeviceMemory from './device_memory'
 import getScreenResolution from './screen_resolution'
-import { getRoundedScreenFrame } from './screen_frame'
+import getScreenFrame from './screen_frame'
 import getHardwareConcurrency from './hardware_concurrency'
 import getTimezone from './timezone'
 import getSessionStorage from './session_storage'
@@ -28,12 +28,16 @@ import areColorsForced from './forced_colors'
 import getMonochromeDepth from './monochrome'
 import getContrastPreference from './contrast'
 import isMotionReduced from './reduced_motion'
+import isTransparencyReduced from './reduced_transparency'
 import isHDR from './hdr'
 import getMathFingerprint from './math'
 import getFontPreferences from './font_preferences'
-import getVideoCard from './video_card'
 import isPdfViewerEnabled from './pdf_viewer_enabled'
 import getArchitecture from './architecture'
+import getApplePayState from './apple_pay'
+import getPrivateClickMeasurement from './private_click_measurement'
+import { getWebGlBasics, getWebGlExtensions } from './webgl'
+import getAudioContextBaseLatency from './audio_base_latency'
 
 /**
  * The list of entropy sources used to make visitor identifiers.
@@ -55,8 +59,9 @@ export const sources = {
   domBlockers: getDomBlockers,
   fontPreferences: getFontPreferences,
   audio: getAudioFingerprint,
-  screenFrame: getRoundedScreenFrame,
+  screenFrame: getScreenFrame,
 
+  canvas: getCanvasFingerprint,
   osCpu: getOsCpu,
   languages: getLanguages,
   colorDepth: getColorDepth,
@@ -71,7 +76,6 @@ export const sources = {
   cpuClass: getCpuClass,
   platform: getPlatform,
   plugins: getPlugins,
-  canvas: getCanvasFingerprint,
   touchSupport: getTouchSupport,
   vendor: getVendor,
   vendorFlavors: getVendorFlavors,
@@ -82,11 +86,19 @@ export const sources = {
   monochrome: getMonochromeDepth,
   contrast: getContrastPreference,
   reducedMotion: isMotionReduced,
+  reducedTransparency: isTransparencyReduced,
   hdr: isHDR,
   math: getMathFingerprint,
-  videoCard: getVideoCard,
   pdfViewerEnabled: isPdfViewerEnabled,
   architecture: getArchitecture,
+  applePay: getApplePayState,
+  privateClickMeasurement: getPrivateClickMeasurement,
+  audioBaseLatency: getAudioContextBaseLatency,
+
+  // Some sources can affect other sources (e.g. WebGL can affect canvas), so it's important to run these sources
+  // after other sources.
+  webGlBasics: getWebGlBasics,
+  webGlExtensions: getWebGlExtensions,
 }
 
 /**
@@ -101,6 +113,7 @@ export type BuiltinComponents = SourcesToComponents<typeof sources>
 
 export interface BuiltinSourceOptions {
   debug?: boolean
+  cache: Record<string, unknown>
 }
 
 /**
